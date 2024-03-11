@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use log::info;
 use pingora::{
     http::{ResponseHeader, StatusCode},
     proxy::{ProxyHttp, Session},
@@ -74,6 +75,22 @@ impl ProxyHttp for V2rayService {
         upstream_response.remove_header("alt-svc");
 
         Ok(())
+    }
+
+    async fn logging(
+        &self,
+        session: &mut Session,
+        _e: Option<&pingora::Error>,
+        ctx: &mut Self::CTX,
+    ) {
+        let response_code = session
+            .response_written()
+            .map_or(0, |resp| resp.status.as_u16());
+
+        info!(
+            "{} response code: {response_code}",
+            self.request_summary(session, ctx)
+        );
     }
 }
 

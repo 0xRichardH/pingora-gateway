@@ -30,7 +30,7 @@ fn main() {
             false,
         ),
     );
-    v2ray_proxy_2.add_tcp("0.0.0.0:8999");
+    v2ray_proxy_2.add_tcp("0.0.0.0:8998");
 
     server.add_service(v2ray_proxy);
     server.add_service(v2ray_proxy_2);
