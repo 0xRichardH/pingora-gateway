@@ -27,6 +27,10 @@ impl ProxyHttp for V2rayService {
     where
         Self::CTX: Send + Sync,
     {
+        if !self.check_host(session) {
+            return Ok(false);
+        }
+
         let request_path = session.req_header().uri.path();
 
         if request_path == "/" {
@@ -106,5 +110,10 @@ impl V2rayService {
 
     fn check_ws_path(&self, path: &str) -> bool {
         path.starts_with(&self.ws_path)
+    }
+
+    fn check_host(&self, session: &mut Session) -> bool {
+        // FIXME: Add error handling
+        self.host == session.get_header("host").unwrap().to_str().unwrap()
     }
 }
