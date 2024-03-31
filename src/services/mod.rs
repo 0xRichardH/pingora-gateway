@@ -1,1 +1,1 @@
-pub mod v2ray;
+pub mod proxy;
