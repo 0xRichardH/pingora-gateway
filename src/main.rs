@@ -1,8 +1,11 @@
-use std::{collections::HashMap, sync::Arc};
+use std::sync::Arc;
 
 use pingora::server::{configuration::Opt, Server};
-use pingora_gateway::services::{
-    proxy_service_tls, DefaultResponseFilter, HostConfig, V2rayRequestFilter,
+use pingora_gateway::{
+    prelude::*,
+    services::{
+        proxy_service_tls, DefaultResponseFilter, HostConfig, HostConfigs, V2rayRequestFilter,
+    },
 };
 use structopt::StructOpt;
 
@@ -14,7 +17,7 @@ fn init_logger() {
 }
 
 fn add_tcp_proxy(server: &mut Server) {
-    let host_configs = HashMap::from([
+    let host_configs = W::<HostConfigs>::from(vec![
         (
             String::from("one.one.one.one"),
             HostConfig {
@@ -47,7 +50,11 @@ fn add_tcp_proxy(server: &mut Server) {
             },
         ),
     ]);
-    let proxy = proxy_service_tls(&server.configuration, "0.0.0.0:8999", host_configs);
+    let proxy = proxy_service_tls(
+        &server.configuration,
+        "0.0.0.0:8999",
+        host_configs.get_wrap(),
+    );
     server.add_service(proxy);
 }
 

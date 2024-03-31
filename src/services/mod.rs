@@ -9,6 +9,8 @@ use request_filter::FilterRequest;
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use crate::prelude::*;
+
 #[derive(Clone)]
 pub struct HostConfig {
     pub proxy_addr: String,
@@ -21,4 +23,14 @@ pub struct HostConfig {
 
 type HostName = String;
 pub type HostConfigs = HashMap<HostName, HostConfig>;
-// TODO: impl From for HostConfigs
+impl From<Vec<(HostName, HostConfig)>> for W<HostConfigs> {
+    fn from(array: Vec<(HostName, HostConfig)>) -> Self {
+        let configs = array
+            .into_iter()
+            .fold(HostConfigs::new(), |mut acc, (name, config)| {
+                acc.insert(name, config);
+                acc
+            });
+        W(configs)
+    }
+}
