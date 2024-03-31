@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
-use pingora::server::Server;
+use pingora::server::{configuration::Opt, Server};
 use pingora_gateway::services::{proxy_service_tls, HostConfig};
+use structopt::StructOpt;
 
 fn init_logger() {
     if std::env::var("RUST_LOG").is_err() {
@@ -46,8 +47,8 @@ fn add_tcp_proxy(server: &mut Server) {
 fn main() {
     init_logger();
 
-    //TODO: read command line arguments
-    let mut server = Server::new(None).unwrap();
+    let opt = Some(Opt::from_args());
+    let mut server = Server::new(opt).unwrap();
     server.bootstrap();
 
     add_tcp_proxy(&mut server);

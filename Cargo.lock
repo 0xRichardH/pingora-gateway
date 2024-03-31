@@ -118,12 +118,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "arc-swap"
-version = "1.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b3d0060af21e8d11a926981cc00c6c1541aa91dd64b9f881985c3da1094425f"
-
-[[package]]
 name = "arrayvec"
 version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1128,7 +1122,6 @@ checksum = "d69b4841cdc05e8d1bf08a41231fb761ca7aac95fa1a75078b7f8cd23b57309d"
 dependencies = [
  "pingora-core",
  "pingora-http",
- "pingora-load-balancing",
  "pingora-proxy",
  "pingora-timeout",
 ]
@@ -1229,6 +1222,7 @@ dependencies = [
  "http 1.1.0",
  "log",
  "pingora",
+ "structopt",
 ]
 
 [[package]]
@@ -1256,35 +1250,6 @@ dependencies = [
  "bytes",
  "http 1.1.0",
  "pingora-error",
-]
-
-[[package]]
-name = "pingora-ketama"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d11b404a0485d0655dea2fb160e74d39184d0d9aed55088650e63f146503e4e"
-dependencies = [
- "crc32fast",
-]
-
-[[package]]
-name = "pingora-load-balancing"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0abac7319a1266f6b5da62cd67e488f8f279276c272298a049b5bb309e640eaa"
-dependencies = [
- "arc-swap",
- "async-trait",
- "fnv",
- "futures",
- "log",
- "pingora-core",
- "pingora-error",
- "pingora-http",
- "pingora-ketama",
- "pingora-runtime",
- "rand",
- "tokio",
 ]
 
 [[package]]
