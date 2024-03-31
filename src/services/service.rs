@@ -26,6 +26,7 @@ impl Callback {
                         key_path,
                         proxy_addr: _,
                         proxy_tls: _,
+                        filters: _,
                     },
                 )| {
                     let cert_bytes = std::fs::read(cert_path).unwrap();

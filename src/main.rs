@@ -1,7 +1,9 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
 
 use pingora::server::{configuration::Opt, Server};
-use pingora_gateway::services::{proxy_service_tls, HostConfig};
+use pingora_gateway::services::{
+    proxy_service_tls, DefaultResponseFilter, HostConfig, V2rayRequestFilter,
+};
 use structopt::StructOpt;
 
 fn init_logger() {
@@ -24,6 +26,10 @@ fn add_tcp_proxy(server: &mut Server) {
                     "{}/keys/one.one.one.one-key.pem",
                     env!("CARGO_MANIFEST_DIR")
                 ),
+                filters: vec![
+                    Arc::new(DefaultResponseFilter {}),
+                    Arc::new(V2rayRequestFilter::new("/ws".to_string())),
+                ],
             },
         ),
         (
@@ -37,6 +43,7 @@ fn add_tcp_proxy(server: &mut Server) {
                     "{}/keys/one.one.one.two-key.pem",
                     env!("CARGO_MANIFEST_DIR")
                 ),
+                filters: vec![],
             },
         ),
     ]);

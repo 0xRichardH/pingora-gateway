@@ -1,9 +1,13 @@
 mod proxy;
+mod request_filter;
 mod service;
 
-use std::collections::HashMap;
-
+pub use request_filter::{DefaultResponseFilter, V2rayRequestFilter};
 pub use service::proxy_service_tls;
+
+use request_filter::FilterRequest;
+use std::collections::HashMap;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct HostConfig {
@@ -12,6 +16,7 @@ pub struct HostConfig {
     pub proxy_hostname: String,
     pub cert_path: String,
     pub key_path: String,
+    pub filters: Vec<Arc<dyn FilterRequest>>,
 }
 
 type HostName = String;

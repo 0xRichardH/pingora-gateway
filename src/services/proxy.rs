@@ -13,16 +13,18 @@ pub struct ProxyService {
 
 pub struct ProxyCtx {
     host_config: Option<HostConfig>,
+    request_path: String,
+}
+
+impl ProxyCtx {
+    pub fn get_request_path(&self) -> String {
+        self.request_path.clone()
+    }
 }
 
 impl ProxyService {
     pub fn new(host_configs: HostConfigs) -> Self {
         Self { host_configs }
-    }
-
-    fn check_ws_path(&self, path: &str) -> bool {
-        // TODO: check if the path is a valid websocket path
-        path.starts_with("/ws/")
     }
 }
 
@@ -31,7 +33,10 @@ impl ProxyHttp for ProxyService {
     type CTX = ProxyCtx;
 
     fn new_ctx(&self) -> Self::CTX {
-        ProxyCtx { host_config: None }
+        ProxyCtx {
+            host_config: None,
+            request_path: String::new(),
+        }
     }
 
     async fn request_filter(
@@ -54,24 +59,13 @@ impl ProxyHttp for ProxyService {
             return Ok(true);
         };
         ctx.host_config = Some(config.clone());
+        ctx.request_path = session.req_header().uri.path().to_string();
 
-        let request_path = session.req_header().uri.path();
-        if request_path == "/" {
-            let mut resp_header = ResponseHeader::build(StatusCode::OK, None)?;
-            resp_header.insert_header("Server", "Cloudflare")?;
-            session.set_keepalive(None);
-            session.write_response_header_ref(&resp_header).await?;
-            session.write_response_body("Connecting...".into()).await?;
-
-            // true: early return as the response is already written
-            return Ok(true);
-        }
-
-        if !self.check_ws_path(request_path) {
-            session.respond_error(StatusCode::NOT_FOUND.as_u16()).await;
-
-            // true: early return as the response is already written
-            return Ok(true);
+        for filter in config.filters.iter() {
+            if filter.filter(session, ctx).await? {
+                // true: early return as the response is already written
+                return Ok(true);
+            }
         }
 
         Ok(false)
