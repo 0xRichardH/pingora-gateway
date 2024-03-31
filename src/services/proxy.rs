@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use ::http::{HeaderName, StatusCode};
 use async_trait::async_trait;
 use log::{error, info};
@@ -7,19 +5,10 @@ use pingora::http::ResponseHeader;
 use pingora::prelude::*;
 use pingora::proxy::ProxyHttp;
 
-#[derive(Clone)]
-pub struct HostConfig {
-    pub proxy_addr: String,
-    pub proxy_tls: bool,
-    pub proxy_hostname: String,
-    pub cert_path: String,
-    pub key_path: String,
-}
-
-type HostName = String;
+use super::{HostConfig, HostConfigs};
 
 pub struct ProxyService {
-    host_configs: HashMap<HostName, HostConfig>,
+    host_configs: HostConfigs,
 }
 
 pub struct ProxyCtx {
@@ -27,7 +16,7 @@ pub struct ProxyCtx {
 }
 
 impl ProxyService {
-    pub fn new(host_configs: HashMap<HostName, HostConfig>) -> Self {
+    pub fn new(host_configs: HostConfigs) -> Self {
         Self { host_configs }
     }
 
@@ -79,7 +68,7 @@ impl ProxyHttp for ProxyService {
         }
 
         if !self.check_ws_path(request_path) {
-            session.respond_error(404).await;
+            session.respond_error(StatusCode::NOT_FOUND.as_u16()).await;
 
             // true: early return as the response is already written
             return Ok(true);

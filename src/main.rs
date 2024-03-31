@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
-use pingora::{proxy::http_proxy_service, server::Server};
-use pingora_gateway::services::proxy::{HostConfig, ProxyService};
+use pingora::server::Server;
+use pingora_gateway::services::{proxy_service_tls, HostConfig};
 
 fn init_logger() {
     if std::env::var("RUST_LOG").is_err() {
@@ -11,7 +11,7 @@ fn init_logger() {
 }
 
 fn add_tcp_proxy(server: &mut Server) {
-    let proxy_service = ProxyService::new(HashMap::from([
+    let host_configs = HashMap::from([
         (
             String::from("one.one.one.one"),
             HostConfig {
@@ -38,13 +38,11 @@ fn add_tcp_proxy(server: &mut Server) {
                 ),
             },
         ),
-    ]));
-    let mut proxy = http_proxy_service(&server.configuration, proxy_service);
-    proxy.add_tcp("0.0.0.0:8999");
+    ]);
+    let proxy = proxy_service_tls(&server.configuration, "0.0.0.0:8999", host_configs);
     server.add_service(proxy);
 }
 
-// RUST_LOG=INFO cargo run
 fn main() {
     init_logger();
 
