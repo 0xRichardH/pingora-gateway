@@ -3,6 +3,9 @@ use pingora_gateway::services::v2ray::V2rayService;
 
 // RUST_LOG=INFO cargo run
 fn main() {
+    if std::env::var("RUST_LOG").is_err() {
+        std::env::set_var("RUST_LOG", "DEBUG");
+    }
     env_logger::init();
 
     //TODO: read command line arguments
