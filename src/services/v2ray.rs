@@ -28,7 +28,9 @@ impl ProxyHttp for V2rayService {
         Self::CTX: Send + Sync,
     {
         if !self.check_host(session) {
-            return Ok(false);
+            session.respond_error(404).await;
+
+            return Ok(true);
         }
 
         let request_path = session.req_header().uri.path();

@@ -22,20 +22,16 @@ fn main() {
             false,
         ),
     );
-    v2ray_proxy.add_tcp("0.0.0.0:8999");
 
-    let mut v2ray_proxy_2 = http_proxy_service(
-        &server.configuration,
-        V2rayService::new(
-            "one.one.one.two".to_string(),
-            "1.1.1.1:443".to_string(),
-            "/abc".to_string(),
-            false,
-        ),
+    let cert_path = format!("{}/keys/one.one.one.one.pem", env!("CARGO_MANIFEST_DIR"));
+    let key_path = format!(
+        "{}/keys/one.one.one.one-key.pem",
+        env!("CARGO_MANIFEST_DIR")
     );
-    v2ray_proxy_2.add_tcp("0.0.0.0:8999");
+    v2ray_proxy
+        .add_tls("0.0.0.0:8999", &cert_path, &key_path)
+        .unwrap();
 
     server.add_service(v2ray_proxy);
-    // server.add_service(v2ray_proxy_2);
     server.run_forever();
 }
