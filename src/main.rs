@@ -1,11 +1,8 @@
-use std::sync::Arc;
-
 use pingora::server::{configuration::Opt, Server};
 use pingora_gateway::{
+    config,
     prelude::*,
-    services::{
-        proxy_service_tls, DefaultResponseFilter, HostConfig, HostConfigs, V2rayRequestFilter,
-    },
+    services::{proxy_service_tls, HostConfig, HostConfigs},
 };
 use structopt::StructOpt;
 
@@ -16,56 +13,42 @@ fn init_logger() {
     env_logger::init();
 }
 
-fn add_tcp_proxy(server: &mut Server) {
-    let host_configs = W::<HostConfigs>::from(vec![
-        (
-            String::from("one.one.one.one"),
-            HostConfig {
-                proxy_addr: String::from("1.1.1.1:443"),
-                proxy_tls: true,
-                proxy_hostname: "one.one.one.one".to_string(),
-                cert_path: format!("{}/keys/one.one.one.one.pem", env!("CARGO_MANIFEST_DIR")),
-                key_path: format!(
-                    "{}/keys/one.one.one.one-key.pem",
-                    env!("CARGO_MANIFEST_DIR")
-                ),
-                filters: vec![
-                    Arc::new(DefaultResponseFilter {}),
-                    Arc::new(V2rayRequestFilter::new("/ws".to_string())),
-                ],
-            },
-        ),
-        (
-            String::from("one.one.one.two"),
-            HostConfig {
-                proxy_addr: String::from("1.0.0.1:443"),
-                proxy_tls: true,
-                proxy_hostname: "one.one.one.two".to_string(),
-                cert_path: format!("{}/keys/one.one.one.two.pem", env!("CARGO_MANIFEST_DIR")),
-                key_path: format!(
-                    "{}/keys/one.one.one.two-key.pem",
-                    env!("CARGO_MANIFEST_DIR")
-                ),
-                filters: vec![],
-            },
-        ),
-    ]);
-    let proxy = proxy_service_tls(
-        &server.configuration,
-        "0.0.0.0:8999",
-        host_configs.get_wrap(),
-    );
+fn add_tcp_proxy(server: &mut Server, cfg: &config::ProxyService) {
+    let host_configs = cfg
+        .host_configs
+        .iter()
+        .fold(HostConfigs::new(), |mut host_config, c| {
+            host_config.insert(
+                c.proxy_hostname.clone(),
+                HostConfig {
+                    proxy_addr: c.proxy_addr.clone(),
+                    proxy_tls: c.proxy_tls,
+                    proxy_hostname: c.proxy_hostname.clone(),
+                    cert_path: c.cert_path.clone(),
+                    key_path: c.key_path.clone(),
+                    filters: c.get_filters(),
+                },
+            );
+            host_config
+        });
+
+    let proxy = proxy_service_tls(&server.configuration, &cfg.listen_addr, host_configs);
     server.add_service(proxy);
 }
 
-fn main() {
+fn main() -> Result<()> {
     init_logger();
 
+    let default_config_path = format!("{}/config.toml", env!("CARGO_MANIFEST_DIR"));
+    let config = config::load_config(&default_config_path)?;
+
     let opt = Some(Opt::from_args());
-    let mut server = Server::new(opt).unwrap();
+    let mut server = Server::new(opt)?;
     server.bootstrap();
 
-    add_tcp_proxy(&mut server);
+    add_tcp_proxy(&mut server, &config.proxy_service);
 
     server.run_forever();
+
+    Ok(())
 }

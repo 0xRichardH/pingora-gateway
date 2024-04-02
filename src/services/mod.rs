@@ -2,11 +2,11 @@ mod proxy;
 mod request_filter;
 mod service;
 
+pub use request_filter::FilterRequest;
 pub use request_filter::{DefaultResponseFilter, V2rayRequestFilter};
 pub use service::proxy_service_tls;
-
-use request_filter::FilterRequest;
 use std::collections::HashMap;
+
 use std::sync::Arc;
 
 use crate::prelude::*;

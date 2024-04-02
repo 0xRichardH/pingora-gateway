@@ -1,5 +1,8 @@
 use std::ops::Deref;
 
+/// An alias for the `Result` type
+pub type Result<T, E = Box<dyn std::error::Error>> = core::result::Result<T, E>;
+
 /// Generic wrapper
 /// for external types to type From/TryFrom conversions
 pub struct W<T>(pub T);
