@@ -1,18 +1,29 @@
+
 [proxy_service]
 listen_addr = "0.0.0.0:8999"
 
+# one.one.one.one
 [[proxy_service.host_configs]]
 proxy_addr = "1.1.1.1:443"
 proxy_tls = true
 proxy_hostname = "one.one.one.one"
 cert_path = "./keys/one.one.one.one.pem"
 key_path = "./keys/one.one.one.one-key.pem"
-filters = ["DefaultResponseFilter", "V2rayRequestFilter"]
 
+[[proxy_service.host_configs.filters]]
+type = "DefaultResponseFilter"
+
+[[proxy_service.host_configs.filters]]
+type = "V2rayRequestFilter"
+args = "/ws"
+
+# one.one.one.two
 [[proxy_service.host_configs]]
 proxy_addr = "1.1.1.2:443"
 proxy_tls = false
 proxy_hostname = "one.one.one.two"
 cert_path = "./keys/one.one.one.two.pem"
 key_path = "./keys/one.one.one.two-key.pem"
-filters = ["DefaultResponseFilter"]
+
+[[proxy_service.host_configs.filters]]
+type = "DefaultResponseFilter"

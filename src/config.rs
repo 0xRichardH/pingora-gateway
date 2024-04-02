@@ -29,9 +29,10 @@ pub struct HostConfig {
 }
 
 #[derive(Deserialize, Clone, Debug, PartialEq, Eq)]
+#[serde(tag = "type", content = "args")]
 pub enum Filter {
     DefaultResponseFilter,
-    V2rayRequestFilter,
+    V2rayRequestFilter(String),
 }
 
 impl TryFrom<&str> for Config {
@@ -55,7 +56,7 @@ impl Filter {
     pub fn get_filter_fn(&self) -> Arc<dyn FilterRequest> {
         match self {
             Filter::DefaultResponseFilter => Arc::new(DefaultResponseFilter {}),
-            Filter::V2rayRequestFilter => Arc::new(V2rayRequestFilter::new("/ws".to_string())),
+            Filter::V2rayRequestFilter(path) => Arc::new(V2rayRequestFilter::new(path.clone())),
         }
     }
 }
@@ -108,7 +109,10 @@ mod tests {
         );
         assert_eq!(host_config_1.get_filters().len(), 2);
         assert_eq!(host_config_1.filters[0], Filter::DefaultResponseFilter);
-        assert_eq!(host_config_1.filters[1], Filter::V2rayRequestFilter);
+        assert_eq!(
+            host_config_1.filters[1],
+            Filter::V2rayRequestFilter("/ws".to_string())
+        );
 
         let host_config_2 = config.proxy_service.host_configs[1].clone();
         assert_eq!(host_config_2.proxy_addr, String::from("1.1.1.2:443"));
@@ -142,7 +146,13 @@ mod tests {
             proxy_hostname = "one.one.one.one"
             cert_path = "one.one.one.one.pem"
             key_path = "one.one.one.one-key.pem"
-            filters = ["DefaultResponseFilter", "V2rayRequestFilter"]
+
+            [[proxy_service.host_configs.filters]]
+            type = "DefaultResponseFilter"
+
+            [[proxy_service.host_configs.filters]]
+            type = "V2rayRequestFilter"
+            args = "/ws"
 
             [[proxy_service.host_configs]]
             proxy_addr = "1.1.1.2:443"
@@ -150,7 +160,9 @@ mod tests {
             proxy_hostname = "one.one.one.two"
             cert_path = "one.one.one.two.pem"
             key_path = "one.one.one.two-key.pem"
-            filters = ["DefaultResponseFilter"]
+
+            [[proxy_service.host_configs.filters]]
+            type = "DefaultResponseFilter"
         "#,
         )
     }
