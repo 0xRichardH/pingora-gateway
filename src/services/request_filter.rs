@@ -30,24 +30,24 @@ impl FilterRequest for DefaultResponseFilter {
 }
 
 #[derive(Clone)]
-pub struct V2rayRequestFilter {
-    ws_path: String,
+pub struct SimplePathFilter {
+    path: String,
 }
 
-impl V2rayRequestFilter {
-    pub fn new(ws_path: String) -> Self {
-        Self { ws_path }
+impl SimplePathFilter {
+    pub fn new(path: String) -> Self {
+        Self { path }
     }
 
-    fn check_ws_path(&self, path: &str) -> bool {
-        path.starts_with(&self.ws_path)
+    fn check_path(&self, path: &str) -> bool {
+        path.starts_with(&self.path)
     }
 }
 
 #[async_trait]
-impl FilterRequest for V2rayRequestFilter {
+impl FilterRequest for SimplePathFilter {
     async fn filter(&self, session: &mut Session, ctx: &mut ProxyCtx) -> pingora::Result<bool> {
-        if !self.check_ws_path(ctx.get_request_path().as_str()) {
+        if !self.check_path(ctx.get_request_path().as_str()) {
             session.respond_error(StatusCode::NOT_FOUND.as_u16()).await;
 
             return Ok(true);

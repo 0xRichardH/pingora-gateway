@@ -1,6 +1,6 @@
 use crate::{
     prelude::*,
-    services::{DefaultResponseFilter, FilterRequest, V2rayRequestFilter},
+    services::{DefaultResponseFilter, FilterRequest, SimplePathFilter},
 };
 use std::{fs::File, io::Read, sync::Arc};
 
@@ -32,7 +32,7 @@ pub struct HostConfig {
 #[serde(tag = "type", content = "args")]
 pub enum Filter {
     DefaultResponseFilter,
-    V2rayRequestFilter(String),
+    SimplePathFilter(String),
 }
 
 impl TryFrom<&str> for Config {
@@ -56,7 +56,7 @@ impl Filter {
     pub fn get_filter_fn(&self) -> Arc<dyn FilterRequest> {
         match self {
             Filter::DefaultResponseFilter => Arc::new(DefaultResponseFilter {}),
-            Filter::V2rayRequestFilter(path) => Arc::new(V2rayRequestFilter::new(path.clone())),
+            Filter::SimplePathFilter(path) => Arc::new(SimplePathFilter::new(path.clone())),
         }
     }
 }
@@ -111,7 +111,7 @@ mod tests {
         assert_eq!(host_config_1.filters[0], Filter::DefaultResponseFilter);
         assert_eq!(
             host_config_1.filters[1],
-            Filter::V2rayRequestFilter("/ws".to_string())
+            Filter::SimplePathFilter("/ws".to_string())
         );
 
         let host_config_2 = config.proxy_service.host_configs[1].clone();
@@ -151,7 +151,7 @@ mod tests {
             type = "DefaultResponseFilter"
 
             [[proxy_service.host_configs.filters]]
-            type = "V2rayRequestFilter"
+            type = "SimplePathFilter"
             args = "/ws"
 
             [[proxy_service.host_configs]]

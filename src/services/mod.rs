@@ -3,7 +3,7 @@ mod request_filter;
 mod service;
 
 pub use request_filter::FilterRequest;
-pub use request_filter::{DefaultResponseFilter, V2rayRequestFilter};
+pub use request_filter::{DefaultResponseFilter, SimplePathFilter};
 pub use service::proxy_service_tls;
 use std::collections::HashMap;
 

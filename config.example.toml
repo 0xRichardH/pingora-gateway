@@ -14,7 +14,7 @@ key_path = "./keys/one.one.one.one-key.pem"
 type = "DefaultResponseFilter"
 
 [[proxy_service.host_configs.filters]]
-type = "V2rayRequestFilter"
+type = "SimplePathFilter"
 args = "/ws"
 
 # one.one.one.two
