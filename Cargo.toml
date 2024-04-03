@@ -17,3 +17,7 @@ toml = "0.8.12"
 
 [dev-dependencies]
 tempdir = "0.3.7"
+
+[profile.release]
+lto = true
+codegen-units = 1
