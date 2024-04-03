@@ -1,0 +1,14 @@
+version: "3.5"
+services:
+  gateway:
+    container_name: gateway
+    image: pingora-gateway:latest
+    environment:
+      - RUST_LOG=error
+      - CARGO_MANIFEST_DIR=/gateway 
+    volumes:
+      - "./config.example.toml:/gateway/config.toml"
+      - "./keys/:/gateway/keys/"
+    restart: unless-stopped
+    ports:
+      - "8080:8999"
