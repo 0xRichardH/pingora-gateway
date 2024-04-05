@@ -66,7 +66,6 @@ pub fn proxy_service_tls(
     let cb = Callback::new(host_configs);
     let cb = Box::new(cb);
     let mut tls_settings = TlsSettings::with_callbacks(cb).unwrap();
-    tls_settings.enable_h2();
     if let Some(root_cert_path) = root_cert_path {
         // load trusted root certificates
         tls_settings.set_ca_file(root_cert_path).unwrap();
