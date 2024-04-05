@@ -16,6 +16,7 @@ pub struct Config {
 pub struct ProxyService {
     pub host_configs: Vec<HostConfig>,
     pub listen_addr: String,
+    pub root_cert_path: Option<String>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -93,6 +94,10 @@ mod tests {
             config.proxy_service.listen_addr,
             String::from("0.0.0.0:443")
         );
+        assert_eq!(
+            config.proxy_service.root_cert_path,
+            Some(String::from("root.pem"))
+        );
         assert_eq!(config.proxy_service.host_configs.len(), 2);
 
         let host_config_1 = config.proxy_service.host_configs[0].clone();
@@ -139,6 +144,7 @@ mod tests {
             r#"
             [proxy_service]
             listen_addr = "0.0.0.0:443"
+            root_cert_path = "root.pem"
 
             [[proxy_service.host_configs]]
             proxy_addr = "1.1.1.1:443"

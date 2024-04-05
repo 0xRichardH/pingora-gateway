@@ -58,13 +58,19 @@ pub fn proxy_service_tls(
     server_conf: &Arc<ServerConf>,
     listen_addr: &str,
     host_configs: HostConfigs,
+    root_cert_path: Option<String>,
 ) -> impl pingora::services::Service {
     let proxy_service = ProxyService::new(host_configs.clone());
     let mut service = http_proxy_service(server_conf, proxy_service);
 
     let cb = Callback::new(host_configs);
     let cb = Box::new(cb);
-    let tls_settings = TlsSettings::with_callbacks(cb).unwrap();
+    let mut tls_settings = TlsSettings::with_callbacks(cb).unwrap();
+    tls_settings.enable_h2();
+    if let Some(root_cert_path) = root_cert_path {
+        // load trusted root certificates
+        tls_settings.set_ca_file(root_cert_path).unwrap();
+    }
     service.add_tls_with_settings(listen_addr, None, tls_settings);
 
     service

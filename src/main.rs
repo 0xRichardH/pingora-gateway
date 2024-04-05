@@ -32,7 +32,12 @@ fn add_tcp_proxy(server: &mut Server, cfg: &config::ProxyService) {
             host_config
         });
 
-    let proxy = proxy_service_tls(&server.configuration, &cfg.listen_addr, host_configs);
+    let proxy = proxy_service_tls(
+        &server.configuration,
+        &cfg.listen_addr,
+        host_configs,
+        cfg.root_cert_path.clone(),
+    );
     server.add_service(proxy);
 }
 
