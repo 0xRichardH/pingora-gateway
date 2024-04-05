@@ -1,3 +1,6 @@
+#[global_allocator]
+static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
 use pingora::server::{configuration::Opt, Server};
 use pingora_gateway::{
     config,
