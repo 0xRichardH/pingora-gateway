@@ -26,6 +26,7 @@ pub struct HostConfig {
     pub proxy_hostname: String,
     pub cert_path: String,
     pub key_path: String,
+    #[serde(default)]
     filters: Vec<Filter>,
 }
 
@@ -98,7 +99,7 @@ mod tests {
             config.proxy_service.root_cert_path,
             Some(String::from("root.pem"))
         );
-        assert_eq!(config.proxy_service.host_configs.len(), 2);
+        assert_eq!(config.proxy_service.host_configs.len(), 3);
 
         let host_config_1 = config.proxy_service.host_configs[0].clone();
         assert_eq!(host_config_1.proxy_addr, String::from("1.1.1.1:443"));
@@ -133,6 +134,22 @@ mod tests {
         );
         assert_eq!(host_config_2.get_filters().len(), 1);
         assert_eq!(host_config_2.filters[0], Filter::DefaultResponseFilter);
+
+        let host_config_3 = config.proxy_service.host_configs[2].clone();
+        assert_eq!(host_config_3.proxy_addr, String::from("1.1.1.3:443"));
+        assert!(!host_config_3.proxy_tls);
+        assert_eq!(
+            host_config_3.proxy_hostname,
+            String::from("one.one.one.three")
+        );
+        assert_eq!(
+            host_config_3.cert_path,
+            String::from("one.one.one.three.pem")
+        );
+        assert_eq!(
+            host_config_3.key_path,
+            String::from("one.one.one.three-key.pem")
+        );
 
         // delete temp dir
         tmp_dir.close()?;
@@ -169,6 +186,13 @@ mod tests {
 
             [[proxy_service.host_configs.filters]]
             type = "DefaultResponseFilter"
+
+            [[proxy_service.host_configs]]
+            proxy_addr = "1.1.1.3:443"
+            proxy_tls = false
+            proxy_hostname = "one.one.one.three"
+            cert_path = "one.one.one.three.pem"
+            key_path = "one.one.one.three-key.pem"
         "#,
         )
     }
