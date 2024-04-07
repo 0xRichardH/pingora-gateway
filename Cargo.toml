@@ -1,6 +1,6 @@
 [package]
 name = "pingora-gateway"
-version = "0.1.1"
+version = "0.1.3"
 authors = ["Richard Hao <richard@0xdev.dev>"]
 license = "MIT"
 edition = "2021"
