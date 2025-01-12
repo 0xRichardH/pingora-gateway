@@ -7,7 +7,7 @@ use pingora_gateway::{
     prelude::*,
     services::{proxy_service_tls, HostConfig, HostConfigs},
 };
-use structopt::StructOpt;
+use clap::Parser;
 
 fn init_logger() {
     if std::env::var("RUST_LOG").is_err() {

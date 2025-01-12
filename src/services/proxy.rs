@@ -54,7 +54,7 @@ impl ProxyHttp for ProxyService {
             error!("No proxy configuration found for host: {}", host_name);
             session
                 .respond_error(StatusCode::BAD_REQUEST.as_u16())
-                .await;
+                .await?;
 
             return Ok(true);
         };
