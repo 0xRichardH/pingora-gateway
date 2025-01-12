@@ -3,7 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use log::debug;
 use pingora::{
-    listeners::{TlsAccept, TlsSettings},
+    listeners::{tls::TlsSettings, TlsAccept},
     proxy::http_proxy_service,
     server::configuration::ServerConf,
     tls::{self, ssl},
