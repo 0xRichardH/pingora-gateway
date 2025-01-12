@@ -1428,7 +1428,7 @@ checksum = "8e39924926e498ddb0e64a642b6c5df56627afc0989b0f7be197eb096f998f0f"
 
 [[package]]
 name = "pingora-gateway"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "async-trait",
  "clap",
