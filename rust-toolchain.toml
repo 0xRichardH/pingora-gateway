@@ -1,0 +1,4 @@
+[toolchain]
+channel = "1.84.0" # or specify a specific version, e.g., "1.75.0"
+components = ["clippy", "rustfmt"] # optional components
+targets = [] # specify targets if needed
