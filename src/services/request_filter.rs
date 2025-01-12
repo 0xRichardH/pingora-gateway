@@ -20,7 +20,7 @@ impl FilterRequest for DefaultResponseFilter {
             resp_header.insert_header("Server", "Cloudflare")?;
             session.set_keepalive(None);
             session.write_response_header_ref(&resp_header).await?;
-            session.write_response_body("Connecting...".into()).await?;
+            session.write_response_body(Some("Connecting...".into()), true).await?;
 
             return Ok(true);
         }
@@ -48,7 +48,7 @@ impl SimplePathFilter {
 impl FilterRequest for SimplePathFilter {
     async fn filter(&self, session: &mut Session, ctx: &mut ProxyCtx) -> pingora::Result<bool> {
         if !self.check_path(ctx.get_request_path().as_str()) {
-            session.respond_error(StatusCode::NOT_FOUND.as_u16()).await;
+            session.respond_error(StatusCode::NOT_FOUND.as_u16()).await?;
 
             return Ok(true);
         }
