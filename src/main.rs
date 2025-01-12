@@ -56,7 +56,5 @@ fn main() -> Result<()> {
 
     add_tcp_proxy(&mut server, &config.proxy_service);
 
-    server.run_forever();
-
-    Ok(())
+    server.run_forever()
 }
