@@ -16,7 +16,7 @@ log = "0.4.22"
 pingora = { version = "0.3.0", features = ["proxy"] }
 serde = { version = "1.0.203", features = ["derive"] }
 toml = "0.8.14"
-clap = { version = "3", features = ["derive"] }
+clap = { version = "4", features = ["derive"] }
 
 [dev-dependencies]
 tempdir = "0.3.7"
