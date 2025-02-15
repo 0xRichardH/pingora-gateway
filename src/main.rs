@@ -7,7 +7,6 @@ use pingora_gateway::{
     prelude::*,
     services::{proxy_service_tls, HostConfig, HostConfigs},
 };
-use clap::Parser;
 
 fn init_logger() {
     if std::env::var("RUST_LOG").is_err() {
@@ -50,7 +49,7 @@ fn main() -> Result<()> {
     let default_config_path = format!("{}/config.toml", env!("CARGO_MANIFEST_DIR"));
     let config = config::load_config(&default_config_path)?;
 
-    let opt = Some(Opt::from_args());
+    let opt = Some(Opt::parse_args());
     let mut server = Server::new(opt)?;
     server.bootstrap();
 
