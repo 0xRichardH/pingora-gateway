@@ -15,7 +15,7 @@ jemallocator = "0.5.4"
 log = "0.4.22"
 pingora = { version = "0.4.0", features = ["proxy", "openssl"] }
 serde = { version = "1.0.203", features = ["derive"] }
-toml = "0.8.14"
+toml = "0.8.20"
 clap = { version = "4", features = ["derive"] }
 
 [dev-dependencies]
