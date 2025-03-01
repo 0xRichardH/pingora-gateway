@@ -1,16 +1,16 @@
 #[global_allocator]
 static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
-use pingora::server::{configuration::Opt, Server};
+use pingora::server::{Server, configuration::Opt};
 use pingora_gateway::{
     config,
     prelude::*,
-    services::{proxy_service_tls, HostConfig, HostConfigs},
+    services::{HostConfig, HostConfigs, proxy_service_tls},
 };
 
 fn init_logger() {
     if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "DEBUG");
+        unsafe { std::env::set_var("RUST_LOG", "DEBUG") };
     }
     env_logger::init();
 }

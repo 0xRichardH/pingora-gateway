@@ -3,7 +3,7 @@ name = "pingora-gateway"
 version = "0.1.4"
 authors = ["Richard Hao <richard@0xdev.dev>"]
 license = "MIT"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
