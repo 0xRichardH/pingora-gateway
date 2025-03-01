@@ -3,13 +3,13 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use log::debug;
 use pingora::{
-    listeners::{tls::TlsSettings, TlsAccept},
+    listeners::{TlsAccept, tls::TlsSettings},
     proxy::http_proxy_service,
     server::configuration::ServerConf,
     tls::{self, ssl},
 };
 
-use super::{proxy::ProxyService, HostConfig, HostConfigs};
+use super::{HostConfig, HostConfigs, proxy::ProxyService};
 
 struct Callback(Vec<(String, tls::x509::X509, tls::pkey::PKey<tls::pkey::Private>)>);
 
@@ -59,7 +59,8 @@ pub fn proxy_service_tls(
     listen_addr: &str,
     host_configs: HostConfigs,
     root_cert_path: Option<String>,
-) -> impl pingora::services::Service {
+) -> impl pingora::services::Service + use<> {
+    // FIXME: we might need to remove use<> in the future
     let proxy_service = ProxyService::new(host_configs.clone());
     let mut service = http_proxy_service(server_conf, proxy_service);
 
