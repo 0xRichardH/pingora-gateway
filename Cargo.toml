@@ -14,7 +14,7 @@ http = "1.1.0"
 jemallocator = "0.5.4"
 log = "0.4.26"
 pingora = { version = "0.4.0", features = ["proxy", "openssl"] }
-serde = { version = "1.0.218", features = ["derive"] }
+serde = { version = "1.0.219", features = ["derive"] }
 toml = "0.8.20"
 clap = { version = "4", features = ["derive"] }
 
