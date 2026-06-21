@@ -19,7 +19,7 @@ impl FilterRequest for DefaultResponseFilter {
             let mut resp_header = ResponseHeader::build(StatusCode::OK, None)?;
             resp_header.insert_header("Server", "Cloudflare")?;
             session.set_keepalive(None);
-            session.write_response_header_ref(&resp_header).await?;
+            session.write_response_header_ref(&resp_header, false).await?;
             session
                 .write_response_body(Some("Connecting...".into()), true)
                 .await?;
